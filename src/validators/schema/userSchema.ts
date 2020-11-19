@@ -1,8 +1,9 @@
 import * as Yup from 'yup'
 
-const updatePassword = Yup.object().shape({
-  password: Yup.string().min(8, 'Min 8 characters'),
-  passwordConfirm: Yup.string().min(8, 'Min 8 characters'),
+const resetPassword = Yup.object().shape({
+  password: Yup.string().min(8, 'Min 8 characters').required(),
+  userId: Yup.string().required(),
+  token: Yup.string().required(),
 })
 
 const login = Yup.object().shape({
@@ -30,7 +31,7 @@ const forgotPasswordForm = Yup.object().shape({
 })
 
 export default {
-  updatePassword,
+  resetPassword,
   login,
   signUp,
   forgotPasswordForm,

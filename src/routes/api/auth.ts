@@ -4,7 +4,10 @@ import useValidation from '../../helpers/useValidation'
 import * as authController from '../../controllers/authController'
 import userSchema from '../../validators/schema/userSchema'
 import asyncHandler from '../../helpers/asyncHandler'
-import { resetPasswordProcess } from '../../controllers/authController'
+import {
+  forgotPasswordProcess,
+  resetPasswordProcess,
+} from '../../controllers/authController'
 
 const route = Router()
 
@@ -48,9 +51,22 @@ route.post(
       userSchema.forgotPasswordForm,
       req.body
     )
-    const { message } = await resetPasswordProcess(email)
+    const { message } = await forgotPasswordProcess(email)
     const buildResponse = BuildResponse.get({ message })
 
+    return res.status(201).json(buildResponse)
+  })
+)
+
+route.patch(
+  '/resetPassword',
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { userId, password, token }: any = useValidation(
+      userSchema.resetPassword,
+      req.body
+    )
+    const { message } = await resetPasswordProcess(userId, password, token)
+    const buildResponse = BuildResponse.get({ message })
     return res.status(201).json(buildResponse)
   })
 )

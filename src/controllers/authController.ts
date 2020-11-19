@@ -2,7 +2,13 @@ import jwt from 'jsonwebtoken'
 import User, { LoginAttributes, UserAttributes } from '../models/user'
 import ResponseError from '../modules/Response/ResponseError'
 import { JWT_SECRET } from '../config/secret'
-import { findByPk, findUserByEmail } from './userController'
+import {
+  findByPk,
+  findByPkPasswordScope,
+  findUserByEmail,
+  findUserByEmailPasswordScope,
+  updateUserPassword,
+} from './userController'
 import { sendPasswordResetMail } from '../helpers/email'
 
 const expiresToken = 7 * 24 * 60 * 60 // 7 Days
@@ -14,7 +20,7 @@ const login = async (formData: LoginAttributes) => {
   })
 
   if (!userData) {
-    throw new ResponseError.NotFound('You don\'t seem to be registered with us')
+    throw new ResponseError.NotFound("You don't seem to be registered with us")
   }
 
   if (userData.active) {
@@ -33,7 +39,7 @@ const login = async (formData: LoginAttributes) => {
         JWT_SECRET,
         {
           expiresIn: expiresToken,
-        },
+        }
       ) // 1 Days
       return {
         token,
@@ -45,7 +51,7 @@ const login = async (formData: LoginAttributes) => {
   }
   /* User not active return error confirm email */
   throw new ResponseError.BadRequest(
-    'please check your email account to verify your email and continue the registration process.',
+    'please check your email account to verify your email and continue the registration process.'
   )
 }
 
@@ -72,7 +78,7 @@ const getProfile = async (userId: string) => {
 const usePasswordHashToMakeToken = (
   passwordHash: any,
   userId: any,
-  createdAt: any,
+  createdAt: any
 ) => {
   const secret = `${passwordHash}-${createdAt}`
   return jwt.sign({ userId }, secret, {
@@ -80,8 +86,8 @@ const usePasswordHashToMakeToken = (
   })
 }
 
-const resetPasswordProcess = async (email: string) => {
-  const user = await findUserByEmail(email)
+const forgotPasswordProcess = async (email: string) => {
+  const user = await findUserByEmailPasswordScope(email)
   if (!user) {
     return {
       message:
@@ -100,4 +106,27 @@ const resetPasswordProcess = async (email: string) => {
   }
 }
 
-export { login, signUp, getProfile, resetPasswordProcess }
+const resetPasswordProcess = async (
+  userId: any,
+  newPassword: any,
+  token: any
+) => {
+  const user: any = await findByPkPasswordScope(userId)
+  const secret: any = `${user.password}-${user.createdAt}`
+  const payload: any = jwt.decode(token, secret)
+  if (payload.userId === user.id) {
+    await updateUserPassword(user, newPassword)
+    return {
+      message: 'success. password reset successful',
+    }
+  }
+  throw new ResponseError.Forbidden('Invalid credentials')
+}
+
+export {
+  login,
+  signUp,
+  getProfile,
+  forgotPasswordProcess,
+  resetPasswordProcess,
+}

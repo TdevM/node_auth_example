@@ -28,7 +28,7 @@ export interface LoginAttributes {
 
 interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
-interface UserInstance
+export interface UserInstance
   extends Model<UserAttributes, UserCreationAttributes>,
     UserAttributes {
   comparePassword(): boolean | void
@@ -57,7 +57,7 @@ User.associate = (models) => {
   User.belongsToMany(models.Role, { through: models.UserRole })
 }
 
-function setUserPassword(instance: UserInstance) {
+export function setUserPassword(instance: UserInstance) {
   const { password } = instance
   const saltRounds = 10
   const hash = bcrypt.hashSync(password, saltRounds)
