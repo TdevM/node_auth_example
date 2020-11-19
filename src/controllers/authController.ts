@@ -13,12 +13,12 @@ const login = async (formData: LoginAttributes) => {
   })
 
   if (!userData) {
-    throw new ResponseError.NotFound('data not found or has been deleted')
+    throw new ResponseError.NotFound("You don't seem to be registered with us")
   }
 
   if (userData.active) {
     // @ts-ignore
-    const comparePassword = userData.comparePassword(password)
+    const comparePassword = await userData.comparePassword(password)
 
     if (comparePassword) {
       const payloadToken = {
@@ -40,7 +40,7 @@ const login = async (formData: LoginAttributes) => {
         tokenType: 'Bearer',
       }
     }
-    throw new ResponseError.BadRequest('incorrect email or password!')
+    throw new ResponseError.BadRequest('Incorrect password')
   }
   /* User not active return error confirm email */
   throw new ResponseError.BadRequest(
@@ -49,7 +49,7 @@ const login = async (formData: LoginAttributes) => {
 }
 
 const signUp = async (formData: UserAttributes) => {
-  const user = findUserByEmail(formData.email)
+  const user = await findUserByEmail(formData.email)
   if (user) {
     throw new ResponseError.BadRequest('Email already in use')
   }
