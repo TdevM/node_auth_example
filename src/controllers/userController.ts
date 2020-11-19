@@ -7,3 +7,7 @@ export const findUserByEmail = (email: string) => {
     },
   })
 }
+
+export const findByPk = (primaryKey: string) => {
+  return User.findByPk(primaryKey, { raw: true })
+}

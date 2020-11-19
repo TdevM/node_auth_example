@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import User, { LoginAttributes, UserAttributes } from '../models/user'
 import ResponseError from '../modules/Response/ResponseError'
 import { JWT_SECRET } from '../config/secret'
-import { findUserByEmail } from './userController'
+import { findByPk, findUserByEmail } from './userController'
 
 const expiresToken = 7 * 24 * 60 * 60 // 7 Days
 
@@ -13,7 +13,7 @@ const login = async (formData: LoginAttributes) => {
   })
 
   if (!userData) {
-    throw new ResponseError.NotFound("You don't seem to be registered with us")
+    throw new ResponseError.NotFound('You don\'t seem to be registered with us')
   }
 
   if (userData.active) {
@@ -32,7 +32,7 @@ const login = async (formData: LoginAttributes) => {
         JWT_SECRET,
         {
           expiresIn: expiresToken,
-        }
+        },
       ) // 1 Days
       return {
         token,
@@ -44,7 +44,7 @@ const login = async (formData: LoginAttributes) => {
   }
   /* User not active return error confirm email */
   throw new ResponseError.BadRequest(
-    'please check your email account to verify your email and continue the registration process.'
+    'please check your email account to verify your email and continue the registration process.',
   )
 }
 
@@ -60,8 +60,12 @@ const signUp = async (formData: UserAttributes) => {
   }
 }
 
-// const getProfile = async (userId: string) => {
-//
-// }
+const getProfile = async (userId: string) => {
+  const user = await findByPk(userId)
+  if (!user) {
+    throw new ResponseError.NotFound(`No user with id ${userId} found`)
+  }
+  return user
+}
 
-export { login, signUp }
+export { login, signUp, getProfile }
