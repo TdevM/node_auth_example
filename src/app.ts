@@ -15,7 +15,7 @@ import ExpressErrorSequelize from 'middlewares/ExpressErrorSequelize'
 import winstonLogger, { winstonStream } from 'config/winston'
 
 const app = express()
-
+require('dotenv').config()
 // view engine setup
 app.set('views', path.join(`${__dirname}/../`, 'views'))
 app.set('view engine', 'pug')
