@@ -53,6 +53,8 @@ function normalizePort(val: string) {
   return false
 }
 
+require('../config/redis')
+
 /**
  * Get port from environment and store in Express.
  */

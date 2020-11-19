@@ -10,6 +10,7 @@ import {
   updateUserPassword,
 } from './userController'
 import { sendPasswordResetMail } from '../helpers/email'
+import Redis from '../config/redis'
 
 const expiresToken = 7 * 24 * 60 * 60 // 7 Days
 
@@ -80,7 +81,7 @@ const usePasswordHashToMakeToken = (
   userId: any,
   createdAt: any
 ) => {
-  const secret = `${passwordHash}-${createdAt}`
+  const secret = `${passwordHash}-${createdAt}-${JWT_SECRET}`
   return jwt.sign({ userId }, secret, {
     expiresIn: 3600, // 1 hour
   })
@@ -100,6 +101,7 @@ const forgotPasswordProcess = async (email: string) => {
     user.createdAt
   )
   await sendPasswordResetMail(user, token)
+  Redis.setWithExpiry(`${user.id}_PASSWORD_RESET`, 3600, token)
   return {
     message:
       'success. password reset mail sent to email. check your email for the next steps',
@@ -112,10 +114,15 @@ const resetPasswordProcess = async (
   token: any
 ) => {
   const user: any = await findByPkPasswordScope(userId)
-  const secret: any = `${user.password}-${user.createdAt}`
+  const secret: any = `${user.password}-${user.createdAt}-${JWT_SECRET}`
+  const redisCachedToken: any = await Redis.get(`${user.id}_PASSWORD_RESET`)
+  if (JSON.parse(redisCachedToken) !== token) {
+    throw new ResponseError.Forbidden('Invalid credentials')
+  }
   const payload: any = jwt.decode(token, secret)
   if (payload.userId === user.id) {
     await updateUserPassword(user, newPassword)
+    Redis.del(`${user.id}_PASSWORD_RESET`)
     return {
       message: 'success. password reset successful',
     }
