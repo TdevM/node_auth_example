@@ -14,7 +14,18 @@ const login = Yup.object().shape({
     .required('Password is required'),
 })
 
+const signUp = Yup.object().shape({
+  fullName: Yup.string().required('Name is required'),
+  email: Yup.string()
+    .email('Valid email required')
+    .required('Email is require'),
+  phone: Yup.string().required('Phone number required'),
+  newPassword: Yup.string().min(8, 'Minimum 8 characters required'),
+  confirmNewPassword: Yup.string().min(8, 'Minimum 8 characters required'),
+})
+
 export default {
   updatePassword,
   login,
+  signUp,
 }

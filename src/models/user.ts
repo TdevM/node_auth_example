@@ -28,8 +28,7 @@ export interface LoginAttributes {
   password: string
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
-}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
 interface UserInstance
   extends Model<UserAttributes, UserCreationAttributes>,
@@ -53,7 +52,7 @@ const User = db.sequelize.define<UserInstance>(
     paranoid: true,
     defaultScope: {
       attributes: {
-        exclude: ['password', 'tokenVerify'],
+        exclude: ['password'],
       },
     },
     scopes: {

@@ -3,8 +3,6 @@ import models from 'models'
 
 const { User } = models
 
-require('dotenv').config()
-
 module.exports = function (passport: any) {
   const jwtOpts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
