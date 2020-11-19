@@ -3,6 +3,7 @@ import User, { LoginAttributes, UserAttributes } from '../models/user'
 import ResponseError from '../modules/Response/ResponseError'
 import { JWT_SECRET } from '../config/secret'
 import { findByPk, findUserByEmail } from './userController'
+import { sendPasswordResetMail } from '../helpers/email'
 
 const expiresToken = 7 * 24 * 60 * 60 // 7 Days
 
@@ -68,4 +69,35 @@ const getProfile = async (userId: string) => {
   return user
 }
 
-export { login, signUp, getProfile }
+const usePasswordHashToMakeToken = (
+  passwordHash: any,
+  userId: any,
+  createdAt: any,
+) => {
+  const secret = `${passwordHash}-${createdAt}`
+  return jwt.sign({ userId }, secret, {
+    expiresIn: 3600, // 1 hour
+  })
+}
+
+const resetPasswordProcess = async (email: string) => {
+  const user = await findUserByEmail(email)
+  if (!user) {
+    return {
+      message:
+        'success. password reset mail sent to email. check your email for the next steps',
+    }
+  }
+  const token = usePasswordHashToMakeToken(
+    user.password,
+    user.id,
+    user.createdAt
+  )
+  await sendPasswordResetMail(user, token)
+  return {
+    message:
+      'success. password reset mail sent to email. check your email for the next steps',
+  }
+}
+
+export { login, signUp, getProfile, resetPasswordProcess }

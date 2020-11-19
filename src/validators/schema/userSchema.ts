@@ -23,8 +23,15 @@ const signUp = Yup.object().shape({
   password: Yup.string().min(8, 'Minimum 8 characters required'),
 })
 
+const forgotPasswordForm = Yup.object().shape({
+  email: Yup.string()
+    .email('Must be a valid email')
+    .required('Email is required'),
+})
+
 export default {
   updatePassword,
   login,
   signUp,
+  forgotPasswordForm,
 }
