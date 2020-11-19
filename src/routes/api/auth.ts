@@ -12,7 +12,7 @@ import {
 const route = Router()
 
 route.post(
-  '/sign_up',
+  '/signUp',
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const value: any = useValidation(userSchema.signUp, req.body)
     const { message, data } = await authController.signUp({
