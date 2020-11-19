@@ -21,7 +21,6 @@ const signUp = Yup.object().shape({
     .required('Email is require'),
   phone: Yup.string().required('Phone number required'),
   password: Yup.string().min(8, 'Minimum 8 characters required'),
-  passwordConfirm: Yup.string().min(8, 'Minimum 8 characters required'),
 })
 
 export default {
