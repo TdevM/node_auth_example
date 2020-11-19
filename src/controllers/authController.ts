@@ -60,4 +60,8 @@ const signUp = async (formData: UserAttributes) => {
   }
 }
 
+// const getProfile = async (userId: string) => {
+//
+// }
+
 export { login, signUp }

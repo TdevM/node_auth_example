@@ -13,6 +13,7 @@ import ExpressErrorYup from 'middlewares/ExpressErrorYup'
 import ExpressErrorResponse from 'middlewares/ExpressErrorResponse'
 import ExpressErrorSequelize from 'middlewares/ExpressErrorSequelize'
 import winstonLogger, { winstonStream } from 'config/winston'
+import passport from './middlewares/Passport'
 
 const app = express()
 require('dotenv').config()
@@ -20,6 +21,7 @@ require('dotenv').config()
 app.set('views', path.join(`${__dirname}/../`, 'views'))
 app.set('view engine', 'pug')
 
+app.use(passport.initialize())
 app.use(helmet())
 app.use(cors())
 app.use(logger('combined', { stream: winstonStream }))
