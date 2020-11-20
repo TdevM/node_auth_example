@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
 import BuildResponse from 'modules/Response/BuildResponse'
-import ResponseError from 'modules/Response/ResponseError'
 import apiRouter from './api/index'
 
 const router = express.Router()

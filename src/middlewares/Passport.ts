@@ -3,11 +3,11 @@ import jwtStrategy from './PassportJWT'
 
 passport.use(jwtStrategy)
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user)
 })
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
   done(null, user)
 })
 

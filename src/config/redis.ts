@@ -16,11 +16,11 @@ if (!isEmpty(REDIS_PASSWORD)) {
 
 const client = redis.createClient(optionConfigs)
 
-client.on('connect', function() {
+client.on('connect', function () {
   console.log('Redis client connected')
 })
 
-client.on('error', function(err) {
+client.on('error', function (err) {
   console.log(`Something went wrong ${err}`)
 })
 
